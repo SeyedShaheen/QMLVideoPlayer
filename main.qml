@@ -74,6 +74,7 @@ Window {
             width : parent.width
             height : parent.height
             source: fileDialog.currentFile
+            volume: 0.5
 
 
             onStopped: {
@@ -81,13 +82,27 @@ Window {
                 browseBtn.visible = true
             }
 
+
             onPlaying: {
-                browseBtnTop.visible = true
+
             }
 
             focus: true
+
+            Keys.onSpacePressed: {
+                video.playbackState == 2 || 0 ? video.play() : video.pause()
+            }
+
+            Keys.onEscapePressed: {
+                window.visibility = "Windowed"
+            }
+
+            Keys.onDownPressed: video.volume = video.volume - 0.05
+            Keys.onUpPressed: video.volume = video.volume + 0.05
+
             Keys.onLeftPressed: video.position = video.position - 5000
             Keys.onRightPressed: video.position = video.position + 5000
+
         }
 
         //base for text and HUD for better visiblity
@@ -330,7 +345,7 @@ Window {
             anchors.bottomMargin: 20
 
                 Text{
-                    text: '🔊'
+                    text: video.muted || video.volume == 0 ? '🔈' : '🔊'
                     color: 'white'
                     font.pointSize: 14
                     anchors.centerIn: parent
@@ -357,7 +372,7 @@ Window {
             anchors.bottomMargin: 22
 
             Text{
-                text: '🗖'
+                text: window.visibility == 2 ? '🗖' : '🡷'
                 color: 'white'
                 font.pointSize: 16
                 anchors.centerIn: parent
@@ -411,7 +426,7 @@ Window {
         FileDialog {
             id: fileDialog
             title: "Please choose a file"
-            nameFilters: ["Video Files (*.mp4 *.mov *.wmv)"]
+            nameFilters: ["Video Files (*.mp4 *.mov *.wmv *mkv)"]
             onAccepted: {
                 browseBtnTop.visible = true
                 browseBtn.visible = false
