@@ -52,3 +52,12 @@ Task: Build a simple QML based program that: • Loads a video file from File Pi
 5. Click on the "Build" on the toolbar then "Run"
 
 The program should run after the build process has finished.
+
+## Demo
+
+
+https://user-images.githubusercontent.com/20756787/225789100-ec1270a2-9b44-4a58-bac8-33c842c19d30.mp4
+
+
+
+
