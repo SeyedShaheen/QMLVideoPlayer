@@ -25,11 +25,6 @@ Window {
             timer.restart()
         }
 
-        onDoubleClicked: {
-            window.visibility == 2 ?
-            window.visibility = "FullScreen" :
-            window.visibility = "Windowed"
-        }
     }
 
 
@@ -39,6 +34,117 @@ Window {
         height: parent.height
         color: 'black'
         anchors.centerIn: parent
+
+
+        //Video Output
+        Video {
+            id: video
+            width : parent.width
+            height : parent.height
+            source: fileDialog.currentFile
+            volume: 0.5
+
+            Text{
+                id: videoPlayBtn
+                text: "▶"
+                font.pointSize: 160
+                color: 'white'
+                opacity: 0.5
+                anchors.centerIn: parent
+                visible: false
+            }
+
+            MouseArea{
+                anchors.fill: parent
+
+                onClicked: {
+                    video.playbackState == 2 ? video.play() : video.pause()
+                    video.playbackState == 0 ? video.play() : console.log('video is not stopped')
+                    video.hasVideo && video.playbackState == 2 ?  shortcutIndicator.shortcutIndicator("⏸") : shortcutIndicator.shortcutIndicator("▶")
+                }
+
+                onDoubleClicked: {
+                    window.visibility == 2 ?
+                    window.visibility = "FullScreen" :
+                    window.visibility = "Windowed"
+                    video.play()
+                    window.visibility != 5 ? shortcutIndicator.shortcutIndicator("🡷") : shortcutIndicator.shortcutIndicator("🗖")
+                }
+            }
+
+            onStopped: {
+                browseBtnTop.visible = false
+                browseBtn.visible = true
+                video.pause()
+                showHideHud.showHideHud(true)
+                timer.stop()
+            }
+
+
+            onPlaying: {
+                browseBtn.visible = false
+                videoPlayBtn.visible = false
+                timer.restart()
+            }
+
+            onPaused: {
+                browseBtn.visible = false
+                showHideHud.showHideHud(true)
+                videoPlayBtn.visible = true
+                timer.stop()
+            }
+
+            focus: true
+
+            Keys.onSpacePressed: {
+                video.playbackState == 2 || 0 ? video.play() : video.pause()
+                video.hasVideo && video.playbackState == 2 ?  shortcutIndicator.shortcutIndicator("⏸") : shortcutIndicator.shortcutIndicator("▶")
+            }
+
+            Keys.onEscapePressed: {
+                window.visibility = "Windowed"
+
+                shortcutIndicator.shortcutIndicator("🡷")
+            }
+
+            Keys.onDownPressed:{
+                video.volume = video.volume - 0.05
+                shortcutIndicator.shortcutIndicator("🔉-")
+            }
+            Keys.onUpPressed: {
+                video.volume = video.volume + 0.05
+                shortcutIndicator.shortcutIndicator("🔊+")
+            }
+
+            Keys.onLeftPressed:{
+                video.position = video.position - 5000
+                video.hasVideo ? shortcutIndicator.shortcutIndicator("⏪") : console.log("no video")
+            }
+            Keys.onRightPressed:{
+                video.position = video.position + 5000
+                video.hasVideo ? shortcutIndicator.shortcutIndicator("⏩") : console.log("no video")
+            }
+
+            Rectangle{
+                id: shortcutDisplay
+                width: 64
+                height: 64
+                anchors.centerIn: parent
+                radius: 32
+                color: 'black'
+                opacity: 0.7
+                visible: false
+
+                Text{
+                    id: shortcutDisplayText
+                    text: ""
+                    color: 'white'
+                    font.pointSize: 18
+                    anchors.centerIn: parent
+                }
+            }
+
+        }
 
         //button to browse to file
         Rectangle{
@@ -66,43 +172,6 @@ Window {
                     fileDialog.open()
                 }
             }
-        }
-
-        //Video Output
-        Video {
-            id: video
-            width : parent.width
-            height : parent.height
-            source: fileDialog.currentFile
-            volume: 0.5
-
-
-            onStopped: {
-                browseBtnTop.visible = false
-                browseBtn.visible = true
-            }
-
-
-            onPlaying: {
-
-            }
-
-            focus: true
-
-            Keys.onSpacePressed: {
-                video.playbackState == 2 || 0 ? video.play() : video.pause()
-            }
-
-            Keys.onEscapePressed: {
-                window.visibility = "Windowed"
-            }
-
-            Keys.onDownPressed: video.volume = video.volume - 0.05
-            Keys.onUpPressed: video.volume = video.volume + 0.05
-
-            Keys.onLeftPressed: video.position = video.position - 5000
-            Keys.onRightPressed: video.position = video.position + 5000
-
         }
 
         //base for text and HUD for better visiblity
@@ -279,7 +348,9 @@ Window {
             }
 
             MouseArea{
-                anchors.fill: parent
+                width: parent.width - seekHandle.width
+                height: parent.height + 10
+                anchors.centerIn: parent
 
                 onPressed: {
                     video.position = mouseX/(seekLine.width - seekHandle.width)*(video.duration)
@@ -301,7 +372,9 @@ Window {
                 x: ((video.position/video.duration)*(seekLine.width - seekHandle.width))
 
                 MouseArea {
-                           anchors.fill: parent
+                           width: parent.width +5
+                           height: parent.height + 5
+                           anchors.centerIn: parent
                            drag.target: seekHandle
                            drag.axis: Drag.XAxis
                            drag.minimumX: 0.1
@@ -420,6 +493,25 @@ Window {
                 browseBtnTop.visible = value
             }
         }
+
+        Item {
+            id: shortcutIndicator
+
+            function shortcutIndicator(value){
+                shortcutDisplay.visible = true
+                shortcutDisplayText.text = value
+                timer2.restart()
+            }
+
+        }
+
+        Timer {
+            id: timer2
+            interval: 700; running: false; repeat: false
+            onTriggered: {
+                shortcutDisplay.visible = false
+            }
+           }
 
 
         //File Browser, only accepts video files
