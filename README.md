@@ -41,3 +41,23 @@ Task: Build a simple QML based program that: • Loads a video file from File Pi
 5. Down Arrow Key [↓]     : decrease the volume by 5%
 6. Escape Key [esc]       : exit fullscreen
 
+## How to Run this project
+
+1. Clone this project to your local machine
+2. Open Qt Creator and Click on Open File or Project under the "Files" menu, locate the cloned project folder then click on "CMakeLists.txt" and click "Open"
+3. On the configue project page select "Desktop Qt 6.4.2 MinGW 64-bit" option then click on "Configure Project" <br> <br>
+![Image of configure project page](https://imgur.com/itEhDlg.png) <br>
+4. Under the project view on the left side panel click on the file "main.qml" under "appQMLVideoPlayer" <br> <br>
+![Image of configure project page](https://imgur.com/KDLU9Wc.png) <br>
+5. Click on the "Build" on the toolbar then "Run"
+
+The program should run after the build process has finished.
+
+## Demo
+
+
+https://user-images.githubusercontent.com/20756787/225789100-ec1270a2-9b44-4a58-bac8-33c842c19d30.mp4
+
+
+
+
